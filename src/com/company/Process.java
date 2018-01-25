@@ -1,33 +1,63 @@
 package com.company;
 
+import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.util.Random;
 
 public class Process {
-    public  int _processName;
-    public  double _arrival;
-    public  double _executeTime;
+    private int _processName;
+    public  String _arrival;
+    public  String _executeTime;
     public  int _priority;
 
+    private DecimalFormat decimalFormat = new DecimalFormat("00.00");
+
+
+    // processing
+    private String _cpu_time = "0.00";
+    private String _wait_time = "0.00";
+    private String _systime_time = "0.00";
+
     private Random random = new Random();
-    private DecimalFormat dformat = new DecimalFormat("##.##");
 
-    public Process(int max_executime,int index,int maxarrival){
+
+    public Process(int min_executime,int max_executime,int index,int maxarrival){
+
         _processName = random.nextInt(2000-1000)+1000;
-        _executeTime = (double)random.nextInt(max_executime-1) + (random.nextInt(60)*0.01);
-        if (index==0) _arrival = 0.00;
-        else _arrival = (double)random.nextInt(maxarrival-1)+(random.nextInt(60)*0.01);
+        _executeTime = decimalFormat.format( BigDecimal.valueOf(random.nextInt(60)*0.01)
+                .add(BigDecimal.valueOf(random.nextInt(max_executime-min_executime)+min_executime)));
+
+        _arrival = decimalFormat.format(BigDecimal.valueOf(random.nextInt(60)*0.01)
+                .add(BigDecimal.valueOf(random.nextInt(maxarrival))));
+
         _priority = random.nextInt(100);
-    }
-    public Process(Process poc){
-        this._processName = poc._processName;
-        this._arrival = poc._arrival;
-        this._executeTime = poc._executeTime;
-        this._priority = poc._priority;
+
     }
 
+    public Process(){
+        _processName = 0;
+        _arrival = "0";
+        _executeTime = "0";
+        _priority = 0;
+
+    }
+
+    public void Processing(Process oldpoc){
+        _cpu_time = decimalFormat.format(Double.parseDouble(oldpoc._cpu_time)+
+                        Double.parseDouble(oldpoc._executeTime));
+        _wait_time =  decimalFormat.format(Double.parseDouble(this._cpu_time) -
+                        Double.parseDouble(this._arrival));
+        _systime_time = decimalFormat.format(Double.parseDouble(this._executeTime) +
+                        Double.parseDouble(this._wait_time));
+    }
     public void showProcess(){
-        System.out.print(_processName +"\t\t"+_arrival+"\t\t"+_executeTime+"\t\t"+_priority+"\n");
+        System.out.println(_processName +"\t\t"
+                +_arrival+"\t\t\t\t"
+                +_executeTime+"\t\t\t\t"
+                +_priority+"\t\t\t\t"
+                +_cpu_time+"\t\t\t\t"
+                +_wait_time+"\t\t\t\t"
+                +_systime_time+"\t\t\t\t"
+                );
     }
-
 }
